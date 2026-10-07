@@ -66,7 +66,30 @@ function cargarMenu() {
         document.getElementById("menuProductos").innerHTML = productos.map(p => `<article class="producto-card"><h3>${escapeHTML(p.nombre)}</h3><p>$ ${escapeHTML(p.precio)}<br>${escapeHTML(p.categoria)}</p><button type="button" class="boton-producto" onclick="agregarProducto(${p.id_producto}, '${escapeJS(p.nombre)}', ${Number(p.precio)})">Agregar</button></article>`).join("");
     }).catch(() => document.getElementById("menuProductos").textContent = "No se pudo cargar el menú.");
 }
-async function cargarMapaPedido() { const respuesta=await fetch("apis/api_mesas.php"); const datos=await respuesta.json(); if(!respuesta.ok)return; const mapa=document.getElementById("mapaPedido"); mapa.innerHTML=""; datos.mesas.forEach(mesa=>{const estado=(mesa.estado||"").toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,"");const boton=document.createElement("button");boton.type="button";boton.className=`mesa-pedido ${estado}`;boton.style.left=`${Number(mesa.pos_x||0)/1200*100}%`;boton.style.top=`${Number(mesa.pos_y||0)/700*100}%`;boton.innerHTML=`<strong>Mesa ${escapeHTML(mesa.numero)}</strong><small>${escapeHTML(mesa.estado)}</small>`;boton.disabled=estado!=="libre";if(estado==="libre")boton.addEventListener("click",()=>seleccionarMesa(mesa,boton));mapa.appendChild(boton);}); }
+async function cargarMapaPedido() {
+    const respuesta = await fetch("apis/api_mesas.php");
+    const datos = await respuesta.json();
+    if (!respuesta.ok) return;
+
+    const mapa = document.getElementById("mapaPedido");
+    mapa.innerHTML = "";
+    datos.mesas.forEach((mesa) => {
+        const estado = (mesa.estado || "").toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+        const boton = document.createElement("button");
+        boton.type = "button";
+        boton.className = `mesa-pedido ${estado}`;
+        boton.style.left = `${Number(mesa.pos_x || 0) / 1200 * 100}%`;
+        boton.style.top = `${Number(mesa.pos_y || 0) / 700 * 100}%`;
+        boton.style.width = `${Math.max(60, Number(mesa.ancho || 100)) / 1200 * 100}%`;
+        boton.style.transform = "none";
+        boton.style.minHeight = "72px";
+        boton.style.borderRadius = "16px";
+        boton.innerHTML = `<strong>Mesa ${escapeHTML(mesa.numero)}</strong><small>${escapeHTML(mesa.estado)}</small>`;
+        boton.disabled = estado !== "libre";
+        if (estado === "libre") boton.addEventListener("click", () => seleccionarMesa(mesa, boton));
+        mapa.appendChild(boton);
+    });
+}
 function seleccionarMesa(mesa,elemento){document.querySelectorAll(".mesa-pedido").forEach(m=>m.classList.remove("seleccionada"));elemento.classList.add("seleccionada");document.getElementById("idMesa").value=mesa.id_mesa;document.getElementById("mesaSeleccionada").textContent=`Mesa ${mesa.numero} seleccionada.`;}
 function agregarProducto(id, nombre, precio) {
     const cantidad = Number.parseInt(prompt(`Cantidad de ${nombre}:`, "1"), 10);
