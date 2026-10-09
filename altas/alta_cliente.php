@@ -14,7 +14,9 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     $direccion = trim($_POST["direccion"] ?? "");
 
     if ($nombre === "" || $apellido === "") {
-        $mensaje = "El nombre y el apellido son obligatorios.";
+    $mensaje = "El nombre y el apellido son obligatorios.";
+} elseif (!preg_match('/^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/u', $nombre) || !preg_match('/^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/u', $apellido)) {
+    $mensaje = "El nombre y el apellido solo pueden contener letras.";
     } elseif (strlen($telefono) > 20 || strlen($direccion) > 255) {
         $mensaje = "El teléfono o la dirección superan la longitud permitida.";
     } else {
