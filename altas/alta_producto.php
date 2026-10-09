@@ -47,7 +47,11 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
     if ($nombre === "") {
         $mensaje = "El nombre del producto es obligatorio.";
-    } elseif ($precio === false || $precio < 0 || $id_categoria === false || $id_categoria <= 0) {
+    } 
+    elseif (!preg_match('/^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/u', $nombre)){
+        $mensaje = "El nombre de producto solo puede contener letras.";
+    }
+    elseif ($precio === false || $precio < 0 || $id_categoria === false || $id_categoria <= 0) {
         $mensaje = "El precio o la categoría no son válidos.";
     } elseif (!$componentesValidos) {
         $mensaje = "Debe indicar al menos un insumo válido y no repetirlo.";
@@ -90,6 +94,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         $mensaje = "No se pudo registrar el producto y sus insumos.";
     }
 }
+
 ?>
 <!DOCTYPE html>
 <html lang="es">
